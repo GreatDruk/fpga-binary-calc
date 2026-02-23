@@ -1,9 +1,9 @@
 module half_adder(
 		input a, b, 
-		output q, carry
+		output q, cout
 );
 		always_comb begin
 				q = a ^ b;
-				carry = a & b;
+				cout = a & b;
 		end
 endmodule
