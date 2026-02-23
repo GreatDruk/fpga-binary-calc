@@ -1,6 +1,6 @@
 module half_adder(
 		input a, b, 
-		output q, cout
+		output logic q, cout
 );
 		always_comb begin
 				q = a ^ b;
