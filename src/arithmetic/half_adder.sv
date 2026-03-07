@@ -1,9 +1,9 @@
 module half_adder(
-		input a, b, 
-		output logic q, cout
+	input a, b, 
+	output logic q, cout
 );
-		always_comb begin
-				q = a ^ b;
-				cout = a & b;
-		end
+	always_comb begin
+		q = a ^ b;
+		cout = a & b;
+	end
 endmodule
