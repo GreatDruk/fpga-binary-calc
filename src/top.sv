@@ -97,4 +97,21 @@ module top(
 		endcase
 	end
 
+	
+	// What to show on display
+	always_comb begin
+		case(state)
+			ENTER_A:
+				display_value = {8'b0, sw};
+			ENTER_OPCODE:
+				display_value = opcode;
+			ENTER_B:
+				display_value = {8'b0, sw};
+			SHOW_RESULT:
+				display_value = result;
+			default:
+				display_value = 0;
+		endcase
+	end
+
 endmodule
