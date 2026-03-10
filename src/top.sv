@@ -78,4 +78,23 @@ module top(
 	end
 
 
+	// Choosing operation
+	always_comb begin
+		if(sw[9]) opcode = 2'b00;  // +
+		else if(sw[8]) opcode = 2'b01;  // -
+		else if(sw[7]) opcode = 2'b10;  // *
+		else opcode = 2'b00;
+	end
+
+
+	// ALU
+	always_comb begin
+		case(opcode)
+			2'b00: result = {8'b0, sum};
+			2'b01: result = {8'b0, diff};
+			2'b10: result = product;
+			default: result = 0;
+		endcase
+	end
+
 endmodule
