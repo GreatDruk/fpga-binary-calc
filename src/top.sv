@@ -29,6 +29,53 @@ module top(
 	logic [17:0] result;
 
 
-	
+	// Arithmetic blocks
+	adder add0(.a(A), .b(B), .sum(sum), .cout(cout));
+	subtractor sub0(.a(A), .b(B), .diff(diff));
+	multiplier mul0(.a(A), .b(B), .product(product));
+
+
+	// Register state
+	always_ff @(posedge clk) begin
+		if(btn2)
+			state <= ENTER_A;  // reset
+		else
+			state <= next_state;
+	end
+
+
+	// Transitions
+	always_comb begin
+		next_state = state;
+		case(state)
+			ENTER_A:
+				if(btn1) next_state = ENTER_OPCODE;
+				
+			ENTER_OPCODE:
+				if(btn1) next_state = ENTER_B;
+				
+			ENTER_B:
+				if(btn1) next_state = SHOW_RESULT;
+				
+			SHOW_RESULT:
+				if(btn2) next_state = ENTER_A;
+		endcase
+	end
+
+
+	// Entering numbers
+	always_ff @(posedge clk) begin
+		if(btn2) begin
+			A <= 0;
+			B <= 0;
+		end
+		else begin
+			if(state == ENTER_A && btn1)
+				A <= sw[8:0];
+			if(state == ENTER_B && btn1)
+				B <= sw[8:0];
+		end
+	end
+
 
 endmodule
