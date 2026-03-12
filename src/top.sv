@@ -1,7 +1,8 @@
 module top(
 	input logic clk, btn1, btn2,
 	input logic [9:0] sw,
-	output logic [17:0] display_value
+	output logic [6:0] seg,
+	output logic [5:0] an
 );
 
 	// Calculator states
@@ -72,7 +73,7 @@ module top(
 
 	// Entering numbers
 	always_ff @(posedge clk) begin
-		if(btn2) begin
+		if(btn2_clean) begin
 			A <= 0;
 			B <= 0;
 		end
@@ -104,14 +105,16 @@ module top(
 		endcase
 	end
 
-	
+
 	// What to show on display
+	logic [17:0] display_value;
+	
 	always_comb begin
 		case(state)
 			ENTER_A:
 				display_value = {8'b0, sw};
 			ENTER_OPCODE:
-				display_value = opcode;
+				display_value = {16'b0, opcode};
 			ENTER_B:
 				display_value = {8'b0, sw};
 			SHOW_RESULT:
@@ -120,5 +123,27 @@ module top(
 				display_value = 0;
 		endcase
 	end
+	
+	
+	// Converting number to decimal
+	logic [23:0] bin_decimal;
+	binary_to_bin_decimal btbd0(.binary(display_value), .bin_decimal(bin_decimal));
+	
+	
+	// Show operation symbol
+	logic show_opcode;
+
+	always_comb begin
+		if(state == ENTER_OPCODE)
+			show_opcode = 1;
+		else
+			show_opcode = 0;
+	end
+
+	seven_seg_driver disp0(
+		.clk(clk), .bin_decimal(bin_decimal),
+		.show_opcode(show_opcode), .opcode(opcode),
+		.seg(seg), .an(an),
+	);
 
 endmodule
