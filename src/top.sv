@@ -27,6 +27,10 @@ module top(
 	
 	// Result
 	logic [17:0] result;
+	
+	// Buttons
+	logic btn1_clean;
+	logic btn2_clean;
 
 
 	// Arithmetic blocks
@@ -36,8 +40,11 @@ module top(
 
 
 	// Register state
+	stable_pulse sp1(.clk(clk), .btn_in(btn1), .btn_pulse(btn1_clean));
+	stable_pulse sp2(.clk(clk), .btn_in(btn2), .btn_pulse(btn2_clean));
+	
 	always_ff @(posedge clk) begin
-		if(btn2)
+		if(btn2_clean)
 			state <= ENTER_A;  // reset
 		else
 			state <= next_state;
@@ -49,16 +56,16 @@ module top(
 		next_state = state;
 		case(state)
 			ENTER_A:
-				if(btn1) next_state = ENTER_OPCODE;
+				if(btn1_clean) next_state = ENTER_OPCODE;
 				
 			ENTER_OPCODE:
-				if(btn1) next_state = ENTER_B;
+				if(btn1_clean) next_state = ENTER_B;
 				
 			ENTER_B:
-				if(btn1) next_state = SHOW_RESULT;
+				if(btn1_clean) next_state = SHOW_RESULT;
 				
 			SHOW_RESULT:
-				if(btn2) next_state = ENTER_A;
+				if(btn2_clean) next_state = ENTER_A;
 		endcase
 	end
 
@@ -70,9 +77,9 @@ module top(
 			B <= 0;
 		end
 		else begin
-			if(state == ENTER_A && btn1)
+			if(state == ENTER_A && btn1_clean)
 				A <= sw[8:0];
-			if(state == ENTER_B && btn1)
+			if(state == ENTER_B && btn1_clean)
 				B <= sw[8:0];
 		end
 	end
