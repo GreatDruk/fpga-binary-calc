@@ -1,6 +1,8 @@
 module top(
 	input logic clk, btn1, btn2,
-	input logic [9:0] sw
+	input logic [9:0] sw,
+	output logic [6:0] seg,
+	output logic [5:0] an
 );
 
 	// Calculator states
@@ -128,7 +130,7 @@ module top(
 	binary_to_bin_decimal btbd0(.binary(display_value), .bin_decimal(bin_decimal));
 	
 	
-	// 
+	// Show operation symbol
 	logic show_opcode;
 
 	always_comb begin
@@ -140,7 +142,8 @@ module top(
 
 	seven_seg_driver disp0(
 		.clk(clk), .bin_decimal(bin_decimal),
-		.show_opcode(show_opcode), .opcode(opcode)
+		.show_opcode(show_opcode), .opcode(opcode),
+		.seg(seg), .an(an),
 	);
 
 endmodule
