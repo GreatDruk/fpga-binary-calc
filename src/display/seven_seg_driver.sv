@@ -1,10 +1,10 @@
 module seven_seg_driver(
 	input  logic clk,
 	input  logic [23:0] bin_decimal,
-	output logic [6:0] seg,
-	output logic [5:0] an,
 	input logic show_opcode,
-	input logic [1:0] opcode
+	input logic [1:0] opcode,
+	output logic [6:0] seg,
+	output logic [5:0] an
 );
 
 	logic [2:0] digit_sel;
