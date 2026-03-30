@@ -1,8 +1,12 @@
 module top(
 	input logic clk, btn1, btn2,
 	input logic [9:0] sw,
-	output logic [6:0] seg,
-	output logic [5:0] an
+	output logic [6:0] seg0,
+	output logic [6:0] seg1,
+	output logic [6:0] seg2,
+	output logic [6:0] seg3,
+	output logic [6:0] seg4,
+	output logic [6:0] seg5
 );
 
 	// Calculator states
@@ -143,7 +147,9 @@ module top(
 	seven_seg_driver disp0(
 		.clk(clk), .bin_decimal(bin_decimal),
 		.show_opcode(show_opcode), .opcode(opcode),
-		.seg(seg), .an(an),
+		.seg0(seg0), .seg1(seg1),
+		.seg2(seg2), .seg3(seg3),
+		.seg4(seg4), .seg5(seg5)
 	);
 
 endmodule

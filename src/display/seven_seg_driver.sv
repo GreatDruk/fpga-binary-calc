@@ -1,83 +1,69 @@
 module seven_seg_driver(
-	input  logic clk,
-	input  logic [23:0] bin_decimal,
+	input logic clk,
+	input logic [23:0] bin_decimal,
 	input logic show_opcode,
 	input logic [1:0] opcode,
-	output logic [6:0] seg,
-	output logic [5:0] an
+	output logic [6:0] seg0,
+	output logic [6:0] seg1,
+	output logic [6:0] seg2,
+	output logic [6:0] seg3,
+	output logic [6:0] seg4,
+	output logic [6:0] seg5
 );
+	logic [3:0] d0, d1, d2, d3, d4, d5;
 
-	logic [2:0] digit_sel;
-	logic [15:0] refresh_cnt;
-	logic [3:0] curr_digit;
-
-	seven_seg_decoder dec0(.digit(curr_digit), .seg(seg));
+	assign d0 = bin_decimal[3:0];
+	assign d1 = bin_decimal[7:4];
+	assign d2 = bin_decimal[11:8];
+	assign d3 = bin_decimal[15:12];
+	assign d4 = bin_decimal[19:16];
+	assign d5 = bin_decimal[23:20];
 	
+	logic [6:0] seg_d0, seg_d1, seg_d2, seg_d3, seg_d4, seg_d5;
+
+	// decoder
+	seven_seg_decoder dec0(.digit(d0), .seg(seg_d0));
+	seven_seg_decoder dec1(.digit(d1), .seg(seg_d1));
+	seven_seg_decoder dec2(.digit(d2), .seg(seg_d2));
+	seven_seg_decoder dec3(.digit(d3), .seg(seg_d3));
+	seven_seg_decoder dec4(.digit(d4), .seg(seg_d4));
+	seven_seg_decoder dec5(.digit(d5), .seg(seg_d5));
 	
-	logic [6:0] op_seg;
-	operation_symbol op0(.opcode(opcode), .digit_sel(digit_sel), .seg(op_seg));
+	// operation symbol
+	logic [6:0] op_seg_left;
+	logic [6:0] op_seg_right;
+	
+	operation_symbol op_left(
+		.opcode(opcode),
+		.digit_sel(0),
+		.seg(op_seg_left)
+	);
 
-	always_ff @(posedge clk)
-		refresh_cnt <= refresh_cnt + 1;
-
-	assign digit_sel = refresh_cnt[15:13];
-
+	operation_symbol op_right(
+		.opcode(opcode),
+		.digit_sel(1),
+		.seg(op_seg_right)
+	);
+	
 	always_comb begin
+		seg0 = 7'b1111111;
+		seg1 = 7'b1111111;
+		seg2 = 7'b1111111;
+		seg3 = 7'b1111111;
+		seg4 = 7'b1111111;
+		seg5 = 7'b1111111;
+
 		if(show_opcode) begin
-			case(digit_sel)
-				3'd0: begin
-					an = 6'b111101;
-					seg = op_seg;
-				end
-				
-				3'd1: begin
-					an = 6'b111110;
-					seg = op_seg;
-				end
-				
-				default: begin
-					an = 6'b111111; 
-					seg = 7'b1111111; 
-				end
-			endcase
+			seg2 = op_seg_left;
+			seg3 = op_seg_right;
 		end
 		else begin
-			case(digit_sel)
-				3'd0: begin
-					an = 6'b111110;
-					curr_digit = bin_decimal[3:0];
-				end
-				
-				3'd1: begin
-					an = 6'b111101;
-					curr_digit = bin_decimal[7:4];
-				end
-				
-				3'd2: begin
-					an = 6'b111011;
-					curr_digit = bin_decimal[11:8];
-				end
-				
-				3'd3: begin
-					an = 6'b110111; 
-					curr_digit = bin_decimal[15:12];
-				end
-				
-				3'd4: begin 
-					an = 6'b101111; 
-					curr_digit = bin_decimal[19:16];
-				end
-				
-				3'd5: begin
-					an = 6'b011111; 
-					curr_digit = bin_decimal[23:20]; 
-				end
-
-				default: begin
-					an = 6'b111111; 
-					curr_digit = 0;
-				end
-			endcase 
+			seg0 = seg_d0;
+			seg1 = seg_d1;
+			seg2 = seg_d2;
+			seg3 = seg_d3;
+			seg4 = seg_d4;
+			seg5 = seg_d5;
 		end
 	end
 
