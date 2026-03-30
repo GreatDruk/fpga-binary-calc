@@ -18,7 +18,7 @@ module stable_pulse(
 		if (btn_sync1 == btn_state) begin
 			cnt <= 0;
 		end else begin
-			cnt <= cnt + 1;
+			cnt <= cnt + 16'd1;
 			if (cnt == 16'hFFFF) begin
 				btn_state <= btn_sync1;
 				cnt <= 0;
